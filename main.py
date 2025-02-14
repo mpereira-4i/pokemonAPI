@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from pokemon_db import PokemonDB
+from models.pokemon_db import PokemonDB
+from models.pokemon import Pokemon
 
 app = FastAPI()
 pokemonDB = PokemonDB()
@@ -17,3 +18,8 @@ def get_all():
 def get_pokemon(pokemon_id: int):
     pokemon = pokemonDB.read_pokemon(pokemon_id)
     return pokemon
+
+@app.post("/pokemons")
+def add_pokemon(pokemon: Pokemon):
+    pokemonDB.insert_pokemon(pokemon)
+    return {"message": "Pokemon added successfully"}

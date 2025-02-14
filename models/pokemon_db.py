@@ -28,5 +28,8 @@ class PokemonDB(BaseModel):
         pokemon = self.open_db().find({"id": pokemon_id})
         pokemon = self.json_helper(pokemon)
         return pokemon
+
+    def insert_pokemon(self, pokemon):
+        self.open_db().insert_one(pokemon.dict())
     
-    
+
