@@ -1,35 +1,23 @@
 from pydantic import BaseModel
 from config.database import get_database
 
-from bson.json_util import dumps
-import json
+class PokemonRepository:
 
-class PokemonDB(BaseModel):
+    def __init__(self):
+        self.db = get_database()
+        self._collection_name = "pokedex"
+        self._pokemon_collection = self.db[self._collection_name]
     
-    def open_db(self):
-        try:
-            data = get_database()
-            data = data["pokedex"]
-        except Exception as e:
-            print(e)
-        return data
-    
-    def json_helper(self, data):
-        data = dumps(data)
-        data = json.loads(data)
-        return data
-
-    def read_all(self):
-        pokemons = self.open_db().find()
-        pokemons = self.json_helper(pokemons)
-        return pokemons
-    
-    def read_pokemon(self, pokemon_id):
-        pokemon = self.open_db().find({"id": pokemon_id})
-        pokemon = self.json_helper(pokemon)
+    def get_by_id(self, pokemon_id):
+        pokemon = self._pokemon_collection.find_one({"id": pokemon_id})
         return pokemon
+    
+    def get(self):
+        pokemons = self._pokemon_collection.find().limit(50)
+        return pokemons
 
-    def insert_pokemon(self, pokemon):
-        self.open_db().insert_one(pokemon.dict())
+    def create(self, pokemon):
+        result = self._pokemon_collection.insert_one(pokemon.dict())
+        return result.inserted_id
     
 

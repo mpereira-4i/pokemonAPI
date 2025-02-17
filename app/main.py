@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from repositories.pokemon import PokemonDB
+from services.pokemon import PokemonService
 from schemas.pokemon import Pokemon
 
 app = FastAPI()
-pokemonDB = PokemonDB()
+pokemon_service = PokemonService()
 
 @app.get("/")
 def read_root():
@@ -11,15 +11,15 @@ def read_root():
 
 @app.get("/pokemons")
 def get_all():
-    pokemons = pokemonDB.read_all()
+    pokemons = pokemon_service.get()
     return pokemons
 
 @app.get("/pokemons/{pokemon_id}")
 def get_pokemon(pokemon_id: int):
-    pokemon = pokemonDB.read_pokemon(pokemon_id)
+    pokemon = pokemon_service.get_by_id(pokemon_id)
     return pokemon
 
 @app.post("/pokemons")
-def add_pokemon(pokemon: Pokemon):
-    pokemonDB.insert_pokemon(pokemon)
-    return {"message": "Pokemon added successfully"}
+def add_pokemon(pokemon_input: Pokemon):
+    pokemon = pokemon_service.create(pokemon_input)   
+    return pokemon
