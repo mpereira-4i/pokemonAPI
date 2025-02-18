@@ -24,8 +24,8 @@ class PokemonService:
 
         return pokemon
     
-    def get(self):
-        pokemons = self._pokemon_repository.get()
+    def get(self, page, page_size):
+        pokemons = self._pokemon_repository.get(page, page_size)
         pokemons = self.json_helper(pokemons)
         return pokemons
 
@@ -35,3 +35,17 @@ class PokemonService:
             raise HTTPException(status_code=400, detail="Error creating pokemon")
         
         return created_pokemon
+    
+    def update(self, pokemon_id, pokemon: Pokemon):
+        updated_pokemon = self._pokemon_repository.update(pokemon_id, pokemon)
+        if not updated_pokemon:
+            raise HTTPException(status_code=404, detail="Pokemon not found")
+        
+        return updated_pokemon
+    
+    def delete(self, pokemon_id):
+        deleted_pokemon = self._pokemon_repository.delete(pokemon_id)
+        if not deleted_pokemon:
+            raise HTTPException(status_code=404, detail="Pokemon not found")
+        
+        return deleted_pokemon
